@@ -13,4 +13,4 @@ const items=[
  return ['atelier-'+i,v[0]+' · '+n,v[1]+' · '+n,v[2]+' · '+n,'bags',129+(i%7)*20,'/images/'+v[3]+'.webp'] as const;
  })
 ] as const;
-export const demoProducts:Product[]=items.map((x,i)=>({id:'demo-'+x[0],name:{ar:x[1],en:x[2],he:x[3]},description:{ar:'هذه القطعة غير متاحة للطلب حاليًا.',en:'This item is currently unavailable to order.',he:'פריט זה אינו זמין כרגע להזמנה.'},category:String(x[4]),brand:'NAJD',isSample:true,price:Number(x[5]),cost:0,oldPrice:0,stock:0,status:'draft',images:[x[6]],colors:[],sizes:[],best:i<18,featured:i%3!==1,isNew:i>=9||[1,2,4,5].includes(i)}));
+export const demoProducts:Product[]=items.map((x,i)=>({id:'demo-'+x[0],name:{ar:x[1],en:x[2],he:x[3]},description:{ar:'منتج وهمي لعرض تصميم المتجر. الصورة والسعر توضيحيان، وهو غير قابل للشراء.',en:'Fictional display product. Image and price are illustrative; this item cannot be purchased.',he:'פריט זה אינו זמין כרגע להזמנה.'},category:String(x[4]),brand:'NAJD',isSample:true,price:Number(x[5]),cost:0,oldPrice:0,stock:0,status:'draft',images:[x[6]],colors:[],sizes:[],best:i<18,featured:i%3!==1,isNew:i>=9||[1,2,4,5].includes(i)}));
