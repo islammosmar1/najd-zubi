@@ -1,6 +1,6 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.117.2';
 const allowed=Deno.env.get('ALLOWED_ORIGIN')||'https://najd-cosmetics.glassyplume.chatgpt.site';
-const origins=new Set([allowed,'http://127.0.0.1:5173','http://localhost:5173']);
+const origins=new Set([allowed,'https://najd-zubi-islammosmar1s-projects.vercel.app','http://127.0.0.1:5173','http://localhost:5173']);
 Deno.serve(async req=>{
  const origin=req.headers.get('origin')||'';const permitted=origins.has(origin);
  const headers:Record<string,string>={'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info,x-retry-count,traceparent,tracestate,baggage','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Vary':'Origin','Cache-Control':'no-store'};
@@ -42,3 +42,4 @@ Deno.serve(async req=>{
  return out({error:'Invalid action'},400);
  }catch{return out({error:'Could not process request'},400)}
 });
+
