@@ -44,10 +44,12 @@
 
 /* User-supplied identity and touch-first navigation. */
 .brand-image{display:block!important;position:relative;overflow:hidden;margin:0!important;line-height:1!important;letter-spacing:normal!important}
-.brand-image-home{width:240px;height:72px;background:#faf6f2;border-radius:4px}
+.brand-image-home{width:240px;height:72px;background:transparent}
 .brand-image-home img{display:block;width:100%;height:100%;object-fit:contain}
-.brand-image-nz{width:92px;height:78px;background:#111;border-radius:7px}
-.brand-image-nz img{position:absolute;left:50%;top:50%;width:225%;height:auto;max-width:none;transform:translate(-50%,-50%)}
+.brand-image-nz{width:92px;height:78px;background:transparent}
+.brand-image-nz img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.22)}
+.app.dark .brand-image-nz img{filter:brightness(0) invert(1)}
+.nl.dark .brand-image-home img{filter:brightness(1.9)}
 .nl.nl .nl-header-inner{grid-template-columns:minmax(0,1fr) 240px minmax(0,1fr)}
 .nl.nl .nl-logo{letter-spacing:normal}
 .app .header-main{gap:24px}
