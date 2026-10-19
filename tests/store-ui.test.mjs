@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+function load(file,globals={}){const exports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports,...globals});return exports}
+const {previousPrice}=load('lib/product-price.ts');
+assert.equal(previousPrice({price:60,oldPrice:120,retailPrice:100,wholesale:true}),100);
+assert.equal(previousPrice({price:60,oldPrice:120,retailPrice:100,wholesale:false}),120);
+assert.equal(previousPrice({price:0,oldPrice:120,retailPrice:100,wholesale:true}),100);
+assert.equal(previousPrice({price:100,oldPrice:0,retailPrice:100,wholesale:true}),null);
+const {heroMedia,safeMediaUrl}=load('lib/hero-media.ts');
+assert.equal(heroMedia({heroImages:['/images/a.webp']})[0].type,'image');
+assert.equal(heroMedia({heroImages:[],heroMedia:[{type:'video',url:'https://example.com/a.mp4'}]})[0].type,'video');
+assert.equal(safeMediaUrl('javascript:alert(1)'),false);assert.equal(safeMediaUrl('//untrusted.test/a.mp4'),false);
+const map=new Map([['najd-state-v1',JSON.stringify({wishes:['one','one',3]})]]);
+const storage={getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v)};
+let updates=0;
+const wish=load('lib/wishlist.ts',{require:()=>({useCallback:fn=>fn,useSyncExternalStore:(_sub,get)=>get()}),localStorage:storage,Event,window:{dispatchEvent:()=>updates++}});
+assert.equal(JSON.stringify(wish.readWishlist()),'["one"]');
+wish.useWishlist()[1](ids=>[...ids,'two']);
+map.set('najd-state-v1',JSON.stringify({wishes:[]}));
+assert.equal(JSON.stringify(wish.readWishlist()),'["one","two"]','Other page state must not overwrite favorites');
+wish.useWishlist()[1](ids=>ids.filter(id=>id!=='one'));
+assert.equal(JSON.stringify(wish.readWishlist()),'["two"]');assert.equal(updates,2);
+console.log('PASS wholesale comparison price, video-only carousel, safe media URLs, favorite migration and shared persistence.');
+
+const effects=[],states=[],notices=[];let refresh,rows=[{id:'old',created_at:'2026-01-01'}],storedOrders=[],sounds=0;
+const react={useCallback:fn=>fn,useRef:value=>({current:value}),useEffect:fn=>effects.push(fn),useState:value=>{const i=states.length;states.push(value);return [value,next=>states[i]=typeof next==='function'?next(states[i]):next]}};
+const client={from:()=>({select:()=>({order:()=>({limit:async()=>({data:rows,error:null})})})}),channel:()=>({on(){return this},subscribe(){return this}}),removeChannel:()=>{}};
+class Audio {state='running';currentTime=0;destination={};async resume(){}async close(){}createOscillator(){sounds++;return {frequency:{value:0},connect(){},start(){},stop(){}}}createGain(){return {gain:{setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}}}
+const alerts=load('lib/order-alerts.ts',{require:name=>name==='react'?react:{db:client},AudioContext:Audio,window:{addEventListener(){},removeEventListener(){}},setInterval:fn=>{refresh=fn;return 1},clearInterval(){}});
+const hook=alerts.useOrderAlerts(true,fn=>storedOrders=fn(storedOrders),m=>notices.push(m),'New order');
+const cleanups=effects.map(fn=>fn());const flush=()=>new Promise(resolve=>setImmediate(resolve));await flush();
+assert.equal(notices.length,0,'Initial order history must not trigger notifications');
+await hook.toggleSound();assert.equal(sounds,3,'Explicit enable plays a test chime');
+rows=[{id:'new',created_at:'2026-01-02'},...rows];refresh();await flush();
+assert.equal(notices.length,1);assert.equal(states[0],1);assert.equal(sounds,6);assert.equal(storedOrders[0].id,'new');
+refresh();await flush();assert.equal(notices.length,1,'Polling and realtime refresh must deduplicate alerts');
+await hook.toggleSound();rows=[{id:'next',created_at:'2026-01-03'},...rows];refresh();await flush();assert.equal(notices.length,2);assert.equal(sounds,6,'Muted orders still show notifications');
+cleanups.forEach(fn=>fn?.());
+console.log('PASS initial history silence, new-order sound and badge, polling deduplication, mute and cleanup.');

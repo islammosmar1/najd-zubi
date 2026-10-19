@@ -1,0 +1,21 @@
+/* Previous homepage restored, with a simple readable mobile campaign. */
+@media(max-width:600px){
+ .nl.nl .nl-campaign-hero{height:auto!important;min-height:0!important;background:#351222;overflow:hidden}
+ .nl.nl .nl-campaign-hero .nl-hero-media{height:320px!important;inset:0 0 auto!important;transform:none!important}
+ .nl.nl .nl-campaign-hero .nl-hero-media img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:18% center!important}
+ .nl.nl .nl-campaign-hero .nl-hero-overlay{background:linear-gradient(to bottom,transparent 220px,#351222 325px)!important;pointer-events:none}
+ .nl.nl .nl-campaign-hero .nl-hero-inner{height:auto!important;min-height:0!important;padding:330px 22px 90px!important;display:block!important;width:100%!important;position:relative}
+ .nl.nl .nl-campaign-hero .nl-hero-copy{width:100%!important;padding:0!important;margin:0!important}
+ .nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:36px!important;line-height:1.5!important;margin:12px 0!important;letter-spacing:0!important;color:#fff6ef}
+ .nl.nl .nl-campaign-hero .nl-hero-copy h1 em{color:#e4c7a1}
+ .nl.nl .nl-campaign-hero .nl-hero-copy p{font-size:14px!important;line-height:1.9!important;max-width:100%;margin:12px 0 20px!important;color:#f1e2e4}
+ .nl.nl .nl-campaign-hero .nl-hero-copy .nl-eyebrow{font-size:8px;color:#e4c7a1}
+ .nl.nl .nl-campaign-hero .nl-button{min-height:48px;font-size:13px!important;padding:13px 22px!important}
+ .nl.nl .nl-campaign-hero .nl-hero-link{font-size:12px!important;margin-top:18px}
+ .nl.nl .nl-campaign-hero .nl-hero-product,.nl.nl .nl-campaign-hero .nl-hero-circle,.nl.nl .nl-campaign-hero .nl-scroll-cue,.nl.nl .nl-campaign-hero .nl-hero-year{display:none!important}
+ .nl.nl .nl-campaign-hero .nl-hero-bottom{bottom:15px!important;inset-inline:16px!important;width:auto!important;justify-content:center}
+ .nl.nl .nl-slide-selector{gap:10px}.nl.nl .nl-slide-selector>button{min-width:44px;min-height:44px}
+ .nl.nl .nl-container{width:calc(100% - 28px)}.nl.nl .nc-heading h2{font-size:25px;line-height:1.6}.nl.nl .nc-heading p{font-size:12px;line-height:1.8}
+ .nl.nl .nc-product-grid{gap:12px}.nl.nl .nc-info h3{font-size:13px!important;overflow-wrap:anywhere}.nl.nl .nc-info>small{font-size:10px}.nl.nl .nc-more-button{min-height:48px}
+ .nl.nl .nl-floating{display:none}.nl.nl .nl-mood-tabs{overflow-x:auto;gap:20px}.nl.nl .nl-mood-tabs button{min-height:44px;flex-shrink:0;font-size:12px}
+}

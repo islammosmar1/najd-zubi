@@ -1,0 +1,11 @@
+import fs from 'node:fs';import ts from 'typescript';import assert from 'node:assert/strict';
+let calls=0;globalThis.__translateDb={functions:{invoke:async(name,options)=>{calls++;assert.equal(name,'translate-name');assert.deepEqual(options.body,{text:'شنطة سوداء'});return {data:{en:'Black bag',he:'תיק שחור'}}}}};
+const source=fs.readFileSync('lib/name-translation.ts','utf8').replace(/import\s*\{\s*db\s*\}\s*from\s*['"]\.\/supabase['"];?/,"const db=globalThis.__translateDb;");
+const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText;
+const {translateName,googleTranslateLink}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+assert.deepEqual(await translateName('شنطة سوداء'),{ar:'شنطة سوداء',en:'Black bag',he:'תיק שחור'});await translateName('شنطة سوداء');assert.equal(calls,1);
+await assert.rejects(()=>translateName('ا'.repeat(501)),/500/);
+globalThis.__translateDb.functions.invoke=async()=>({error:{context:{json:async()=>({error:'GOOGLE_NOT_CONFIGURED'})}}});await assert.rejects(()=>translateName('شنطة أخرى'),/مفتاح/);
+const link=new URL(googleTranslateLink('a & # / شنطة','he'));assert.equal(link.hostname,'translate.google.com');assert.equal(link.searchParams.get('text'),'a & # / شنطة');assert.equal(link.searchParams.get('tl'),'he');
+const abort=new AbortController();abort.abort();await assert.rejects(()=>translateName('شنطة سوداء',abort.signal),/Aborted/);
+console.log('PASS Google translation transport, cache, abort, bounds, setup failure and encoded manual links.');

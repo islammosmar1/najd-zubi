@@ -1,0 +1,11 @@
+[functions.checkout]
+verify_jwt = false
+[functions.beauty-ai]
+verify_jwt = false
+
+# Login verifies passwords; all management operations validate JWT + staff.manage inside the function.
+[functions.wholesale-accounts]
+verify_jwt = false
+
+[functions.translate-name]
+verify_jwt = true

@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import ts from 'typescript';
+const js=ts.transpileModule(fs.readFileSync('lib/checkout-attempt.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {checkoutAttempt,clearCheckoutAttempt}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const map=new Map();const storage={getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)};
+const payload={customer:{phone:'private-phone'},lines:[{id:'one',qty:1}]};const a=await checkoutAttempt(payload,null,storage);assert.equal((await checkoutAttempt(payload,null,storage)).id,a.id,'Reload retry retains ID');assert.equal((await checkoutAttempt(payload,a)).id,a.id,'Storage unavailable still retains ID in memory');assert.notEqual((await checkoutAttempt({...payload,lines:[]},a)).id,a.id,'Changed checkout gets new ID');assert.ok(![...map.values()][0].includes('private-phone'));clearCheckoutAttempt(storage);assert.notEqual((await checkoutAttempt(payload,null,storage)).id,a.id,'A successful purchase does not block a subsequent identical purchase');
+console.log('PASS stable checkout retries, reload recovery, changed payload separation, no raw customer storage, reset after success.');

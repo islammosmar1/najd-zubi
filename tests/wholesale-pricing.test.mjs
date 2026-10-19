@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import ts from 'typescript';
+let signedIn=false,active=false,failPrices=false;
+const db={auth:{getSession:async()=>({data:{session:signedIn?{user:{id:'buyer'}}:null}})},from:table=>table==='wholesale_accounts'?{select:()=>({eq:()=>({maybeSingle:async()=>({data:{active}})})})}:{select:async()=>({data:[{id:'one',price:'50.00'},{id:'free',price:0}],error:failPrices?new Error('Permission denied'):null})}};
+const exports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('lib/wholesale.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports,require:()=>({db})});
+const rows=[{id:'one',price:100},{id:'two',price:200},{id:'free',price:30}];
+assert.equal(exports.normalizePhone('٠٠٩٧٠ ٥٩٩-٠٠٠-٠٠١'),'+970599000001');
+assert.equal(await exports.applyWholesalePrices(rows),rows,'Anonymous visitors retain retail data');signedIn=true;
+assert.equal(await exports.applyWholesalePrices(rows),rows,'Inactive account retains retail prices');active=true;
+const mapped=await exports.applyWholesalePrices(rows);assert.equal(mapped[0].price,50);assert.equal(mapped[0].retailPrice,100);assert.equal(mapped[0].wholesale,true);assert.equal(mapped[1].price,200);assert.equal(mapped[1].wholesale,undefined);assert.equal(mapped[2].price,0);assert.equal(rows[0].price,100,'Never mutate the retail catalog');
+failPrices=true;await assert.rejects(()=>exports.applyWholesalePrices(rows),/Permission denied/);
+console.log('PASS wholesale UI pricing: guest, inactive, approved, zero price, retail fallback, no mutation, error handling, Arabic phone digits. Mocked API, not a browser test.');

@@ -1,0 +1,1 @@
+export default function BrandMark(){return <span className="najd-brand-mark nz-brand" dir="ltr" aria-label="Najd Zubi Cosmetics"><img src="/brand/nz-monogram.svg" alt="" width={160} height={160}/><span className="nz-wordmark">NAJD ZUBI<small>COSMETICS</small></span></span>}

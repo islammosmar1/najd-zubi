@@ -1,0 +1,16 @@
+/* Only override explicitly configured colors; preserve existing defaults. */
+:is(.nl.nl,.app.app)[style*="--custom-background"]{background:var(--custom-background)}
+:is(.nl.nl,.app.app)[style*="--custom-text"]{color:var(--custom-text)}
+.nl.nl[style*="--custom-navbar"] .nl-header,.app.app[style*="--custom-navbar"]>header{background:var(--custom-navbar)}
+.nl.nl[style*="--custom-card"] :is(.nc-card,.nx-category-orb),.app.app[style*="--custom-card"] :is(.product-card,.modal,.taxonomy-card){background:linear-gradient(145deg,#ffffff14,#ffffff03),var(--custom-card)}
+.nl.nl[style*="--custom-accent"] .nl-button-wine,.app.app[style*="--custom-accent"] .btn.primary{background:var(--custom-accent)}
+:is(.nl.nl,.app.app)[style*="--custom-ticker"] .najd-ticker{background:var(--custom-ticker)}
+:is(.nl.nl,.app.app)[style*="--custom-ticker-text"] .najd-ticker{color:var(--custom-ticker-text)}
+.category-brand-links{display:flex;gap:10px;overflow-x:auto;padding:8px 0 20px;scrollbar-width:thin}
+.category-brand-links a{display:inline-flex;align-items:center;gap:9px;flex-shrink:0;border:1px solid var(--line);border-radius:30px;padding:8px 16px;background:var(--panel);color:var(--ink);text-decoration:none;font-size:12px}
+.category-brand-links img,.brand-chip-image{width:30px;height:30px;object-fit:contain;border-radius:50%}
+.brand-wheel .nx-brand-logo{width:110px;height:65px;object-fit:contain}
+.brand-category-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;max-height:220px;overflow:auto;padding:12px 0}
+.theme-color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:16px;margin:20px 0}
+.theme-color-grid label{display:grid;gap:8px}.theme-color-grid input[type=color]{width:100%;height:42px;padding:3px;cursor:pointer}.theme-color-grid code{font-size:12px}
+.theme-preview{padding:16px;border-radius:16px;margin:15px 0}.theme-preview>div,.theme-preview>p{padding:15px;border-radius:8px}
