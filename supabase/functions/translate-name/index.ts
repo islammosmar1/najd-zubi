@@ -1,9 +1,10 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.117.2';
-const origin=Deno.env.get('ALLOWED_ORIGIN')||'https://najd-cosmetics.glassyplume.chatgpt.site';
+const configuredOrigin=Deno.env.get('ALLOWED_ORIGIN')||'https://najd-cosmetics.glassyplume.chatgpt.site';
 Deno.serve(async req=>{
+ const requestOrigin=req.headers.get('origin')||'';const origin=new Set([configuredOrigin,'https://najd-zubi-islammosmar1s-projects.vercel.app','http://127.0.0.1:5173','http://localhost:5173']).has(requestOrigin)?requestOrigin:'';
  const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store','Vary':'Origin'};
  const out=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers});
- if(req.method==='OPTIONS')return new Response(null,{headers});
+ if(req.method==='OPTIONS')return new Response(null,{status:origin?204:403,headers});
  if(req.method!=='POST'||req.headers.get('origin')!==origin)return out({error:'Forbidden'},403);
  try{
   const token=req.headers.get('Authorization')?.replace(/^Bearer /,'')||'';
