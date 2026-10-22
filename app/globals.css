@@ -94,8 +94,12 @@
 }
 
 /* Availability, checkout and mobile-first category navigation. */
-.is-sold-out{filter:grayscale(.65);opacity:.55!important}
-.is-sold-out .tag,.is-sold-out .nc-badge,.is-sold-out .nx-badge{background:#9d233c;color:white}
+.is-sold-out{filter:none!important;opacity:1!important}
+.is-sold-out .nc-image-link,.is-sold-out .nx-product-photo>a:first-child,.is-sold-out .image-button,.is-sold-out .nc-info,.is-sold-out .nx-product-info,.is-sold-out .product-info{filter:grayscale(.65);opacity:.55}
+.checkout-wrap-items>div{padding:12px 0;border-bottom:1px solid #dec4cc}
+.cart-line .gift-wrap-option{margin-top:12px;padding:10px;font-size:12px}
+
+.is-sold-out .tag,.is-sold-out .nc-badge,.is-sold-out .nx-badge{background:#d40000!important;color:#fff!important;opacity:1!important;filter:none!important;font-weight:800!important;font-size:12px!important;padding:8px 12px!important;box-shadow:0 2px 8px #7003}
 .bag-category-strip{display:flex;gap:clamp(18px,4vw,64px);justify-content:center;overflow-x:auto;padding:28px 20px 32px;background:#faf0f2;scroll-snap-type:x proximity}
 .bag-category-strip a{flex:0 0 auto;text-decoration:none;color:#713e4a;text-align:center;scroll-snap-align:start;width:140px}
 .bag-category-strip a>span{display:flex;align-items:center;justify-content:center;width:140px;height:140px;border-radius:50%;overflow:hidden;background:#f0dbe0;margin-bottom:12px}
