@@ -92,3 +92,19 @@
  .app[dir=ltr] .header-main>.wordmark{order:-1}
  .app[dir=ltr] .header-main>.wordmark .brand-image-nz{margin-left:auto!important}
 }
+
+/* Availability, checkout and mobile-first category navigation. */
+.is-sold-out{filter:grayscale(.65);opacity:.55!important}
+.is-sold-out .tag,.is-sold-out .nc-badge,.is-sold-out .nx-badge{background:#9d233c;color:white}
+.bag-category-strip{display:flex;gap:clamp(18px,4vw,64px);justify-content:center;overflow-x:auto;padding:28px 20px 32px;background:#faf0f2;scroll-snap-type:x proximity}
+.bag-category-strip a{flex:0 0 auto;text-decoration:none;color:#713e4a;text-align:center;scroll-snap-align:start;width:140px}
+.bag-category-strip a>span{display:flex;align-items:center;justify-content:center;width:140px;height:140px;border-radius:50%;overflow:hidden;background:#f0dbe0;margin-bottom:12px}
+.bag-category-strip img{width:100%;height:100%;object-fit:cover}
+.bag-category-strip svg{width:54px;height:54px}
+.bag-category-strip strong{font-size:16px}
+.gift-wrap-option{padding:16px;border:1px solid #dec4cc;border-radius:12px;background:#fcf3f6}
+.gift-wrap-option strong{display:block;margin-top:6px}
+.restock-request{margin:18px 0}.restock-request form{padding:18px 0}
+.restock-phone{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}
+.restock-phone input{width:100%;min-width:0}
+@media(max-width:600px){.bag-category-strip{justify-content:flex-start;gap:18px;padding:22px 16px}.bag-category-strip a{width:96px}.bag-category-strip a>span{width:96px;height:96px}.bag-category-strip strong{font-size:13px}}

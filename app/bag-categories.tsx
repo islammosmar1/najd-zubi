@@ -1,0 +1,6 @@
+import type {Lang,Product,Settings} from '../lib/catalog';
+import CategoryIcon from './category-icon';
+export default function BagCategories({settings,products,lang}:{settings:Settings;products:Product[];lang:Lang}){
+ const cats=settings.categories.filter(c=>c[0]!=='all'&&!settings.categoryMeta?.[c[0]]?.hidden&&!settings.categoryMeta?.[c[4]]?.hidden&&(c[0]==='bags'||c[4]==='bags'||['accessories','makeup'].includes(c[0]))).sort((a,b)=>Number(b[4]==='bags')-Number(a[4]==='bags'));
+ return <nav className="bag-category-strip" aria-label={lang==='ar'?'أقسام الشنط والتسوق':'Shop categories'}>{cats.map(c=>{const image=settings.categoryMeta?.[c[0]]?.image||products.find(p=>(p.category===c[0]||(c[0]==='bags'&&settings.categories.some(x=>x[0]===p.category&&x[4]==='bags')))&&p.images[0])?.images[0];return <a key={c[0]} href={'/shop?category='+encodeURIComponent(c[0])}><span>{image?<img src={image} alt="" width={140} height={140}/>:<CategoryIcon kind={c[4]||c[0]}/>}</span><strong>{c[lang==='ar'?1:lang==='en'?2:3]||c[1]}</strong></a>})}</nav>;
+}

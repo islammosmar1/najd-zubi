@@ -1,0 +1,12 @@
+'use client';
+import {useCallback,useEffect,useState} from 'react';
+import {db} from '../lib/supabase';
+import type {Lang,Product} from '../lib/catalog';
+type Request={id:string;product_id:string;phone:string;created_at:string;contacted:boolean};
+export default function RestockAdmin({products,lang}:{products:Product[];lang:Lang}){
+ const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ const t=(a:string,b:string,c:string)=>lang==='ar'?a:lang==='he'?c:b;
+ const refresh=useCallback(async()=>{if(!db)return;setBusy(true);const r=await db.from('restock_requests').select('id,product_id,phone,created_at,contacted').order('created_at',{ascending:false}).limit(500);setError(r.error?.message||'');if(!r.error)setRows(r.data||[]);setBusy(false)},[]);
+ useEffect(()=>{void refresh()},[refresh]);
+ return <details className="studio-disclosure"><summary>{t('طلبات أخبرني عندما تتوفر','Restock requests','בקשות לעדכון מלאי')} ({rows.filter(r=>!r.contacted).length})</summary><button className="btn outline" disabled={busy} onClick={()=>void refresh()}>{t('تحديث','Refresh','רענון')}</button><p role="status">{error}</p>{rows.map(r=>{const p=products.find(p=>p.id===r.product_id);return <article className="panel" key={r.id}><strong>{p?.name[lang]||p?.name.ar||r.product_id}</strong><p>{p&&p.stock>0?t('متوفر الآن','Available now','זמין כעת'):t('ما زال غير متوفر','Still unavailable','עדיין לא זמין')}</p><a className="btn outline" href={'https://wa.me/'+r.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(t('مرحبًا، المنتج الذي طلبتِ إعلامك بتوفره: ','Hello, the product you asked about: ','שלום, המוצר שביקשת: ')+(p?.name[lang]||r.product_id))} target="_blank" rel="noopener noreferrer"><b dir="ltr">{r.phone}</b> · WhatsApp</a><label className="check-label"><input type="checkbox" checked={r.contacted} onChange={async e=>{if(!db)return;const result=await db.from('restock_requests').update({contacted:e.target.checked}).eq('id',r.id);if(result.error)setError(result.error.message);else void refresh()}}/>{t('تم التواصل','Contacted','נוצר קשר')}</label></article>})}{!rows.length&&!busy&&<p>{t('لا توجد طلبات توفر بعد','No requests yet','אין בקשות עדיין')}</p>}</details>;
+}
