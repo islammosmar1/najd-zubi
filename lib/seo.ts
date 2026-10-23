@@ -21,7 +21,7 @@ export function publicImage(value:unknown):string|undefined {
 }
 export function pageMetadata(title:string,description:string,path:string,image?:string,index=true):Metadata {
  const url=siteOrigin?siteOrigin+path:undefined;
- const cover=publicImage(image)||publicImage('/images/najd-cover-burgundy-v4.webp');
+ const cover=publicImage(image)||publicImage('/brand/najd-bags-cosmetics-2026.png');
  return {title,description,alternates:index&&url?{canonical:url}:undefined,
   robots:{index,follow:true},
   openGraph:{type:'website',siteName:'NAJD ZUBI COSMETICS',locale:'ar_PS',title,description,url:index?url:undefined,images:cover?[{url:cover,alt:title}]:[]},
