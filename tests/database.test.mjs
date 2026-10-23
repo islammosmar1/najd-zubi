@@ -4,7 +4,7 @@ import {pgcrypto} from '@electric-sql/pglite/contrib/pgcrypto';
 import fs from 'node:fs';import assert from 'node:assert/strict';
 const db=new PGlite({extensions:{pgcrypto}});
 await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create function auth.jwt() returns jsonb language sql stable as $$select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb$$;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid,bucket_id text);alter table storage.objects enable row level security;`);
-for(const f of ['001_store.sql','002_commerce.sql','003_ai.sql','20261012190923_wholesale_delivery.sql','20261013071819_catalog_security_hardening.sql','20261015072134_completed_purchase_reviews.sql','20261015222726_checkout_retry_and_atomic_product.sql','20261016080344_category_product_order.sql','20261016083213_launch_variant_stock.sql','20261016153502_delivery_governorates_without_gaza.sql','20261016155124_audit_product_integrity.sql','20261022091113_wrapping_and_restock.sql','20261022092939_per_item_gift_wrapping.sql'])await db.exec(fs.readFileSync('supabase/migrations/'+f,'utf8'));
+for(const f of ['001_store.sql','002_commerce.sql','003_ai.sql','20261012190923_wholesale_delivery.sql','20261013071819_catalog_security_hardening.sql','20261015072134_completed_purchase_reviews.sql','20261015222726_checkout_retry_and_atomic_product.sql','20261016080344_category_product_order.sql','20261016083213_launch_variant_stock.sql','20261016153502_delivery_governorates_without_gaza.sql','20261016155124_audit_product_integrity.sql','20261022091113_wrapping_and_restock.sql','20261022092939_per_item_gift_wrapping.sql','20261023131847_coupon_sales_report.sql'])await db.exec(fs.readFileSync('supabase/migrations/'+f,'utf8'));
 await db.exec(fs.readFileSync('supabase/seed.sql','utf8'));
 await db.exec(`grant usage on schema public,auth to anon,authenticated;grant select,insert,update,delete on all tables in schema public to anon,authenticated;grant usage on all sequences in schema public to authenticated;insert into auth.users(id) values('11111111-1111-4111-8111-111111111111'),('22222222-2222-4222-8222-222222222222');insert into admins(id) values('11111111-1111-4111-8111-111111111111');insert into admins(id,role,permissions) values('22222222-2222-4222-8222-222222222222','products',array['products.read','products.write']);insert into coupons(code,kind,value,max_uses) values('SAVE10','percent',10,1);update product_costs set cost=40;`);
 const claim=async(id='',aal='aal1')=>{await db.query(`select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claims',$2,false)`,[id,JSON.stringify({aal})])};
@@ -199,5 +199,26 @@ await db.exec("reset role;update products set stock=1 where id='najd-2';set role
 await assert.rejects(()=>rpc('request_restock',['najd-2','+970599000878']),/Product unavailable/);
 await db.exec('reset role');
 console.log('PASS wrapping: server price, admin price change, receipt persistence, editing totals and disabled option. Restock: international phone, deduplication, private contacts, staff permissions and availability guard.');
+
+
+await db.exec('reset role');await claim();
+await db.exec("insert into coupons(code,kind,value) select 'QA_CODE_'||n,'percent',10 from generate_series(1,40) n;");
+await db.exec("insert into orders(created_at,name,phone,city,address,items,subtotal,delivery,discount,total,status,coupon_code) select '2025-01-15 12:00:00'::timestamp at time zone 'Asia/Hebron','QA','0000000000','QA','QA only','[]',100,20,10,110,'completed','QA_CODE_1' from generate_series(1,1005);");
+await db.exec("insert into orders(created_at,name,phone,city,address,items,subtotal,delivery,discount,total,status,coupon_code) select d::timestamp at time zone 'Asia/Hebron','QA','0000000000','QA','QA only','[]',100,20,10,110,s,'QA_CODE_1' from (values ('2025-01-01 00:00:00','delivered'),('2025-01-31 23:59:59','pending'),('2025-02-01 00:00:00','completed'),('2024-12-31 23:59:59','completed'),('2025-01-20 00:00:00','cancelled'),('2025-01-20 00:00:00','returned')) v(d,s);");
+await db.exec('set role anon');
+await assert.rejects(()=>rpc('coupon_sales_report',['2025-01-01','2025-01-31']),/permission denied|Forbidden/);
+await db.exec('set role authenticated');await claim('33333333-3333-4333-8333-333333333333');
+await assert.rejects(()=>rpc('coupon_sales_report',['2025-01-01','2025-01-31']),/Forbidden/);
+await claim('22222222-2222-4222-8222-222222222222');
+await assert.rejects(()=>rpc('coupon_sales_report',['2025-01-01','2025-01-31']),/Forbidden/);
+await claim('11111111-1111-4111-8111-111111111111','aal2');
+const couponsReport=await rpc('coupon_sales_report',['2025-01-01','2025-01-31']);
+assert.equal(couponsReport.filter(r=>r.code.startsWith('QA_CODE_')).length,40);
+const one=couponsReport.find(r=>r.code==='QA_CODE_1');
+assert.equal(one.orders_count,1007);assert.equal(one.net_sales,1007*90);assert.equal(one.delivered_sales,1006*90);assert.equal(one.excluded_count,2);
+assert.equal(couponsReport.find(r=>r.code==='QA_CODE_40').net_sales,0);
+await assert.rejects(()=>rpc('coupon_sales_report',['2025-02-01','2025-01-01']),/Invalid date range/);
+console.log('PASS coupon reporting: 40 codes, >1000 orders, inclusive Hebron dates, net excluding delivery, delivered split, cancellations/returns excluded, and guest/wholesale/unauthorized-staff denial.');
+await db.exec('reset role');
 
 await db.close();console.log('PASS variant stock: total synchronization, option oversell denial, atomic edits and rollback, cancellation restores correct options.');
