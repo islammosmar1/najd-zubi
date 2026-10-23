@@ -1,0 +1,16 @@
+/* Keep uploaded banners complete; do not inherit legacy half-width slides. */
+.nl.nl .nl-campaign-hero{height:auto!important;min-height:0!important;max-height:none;overflow:hidden;background:#351222}
+.nl.nl .nl-campaign-hero .nl-hero-media{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;transform:none!important;z-index:auto;display:grid}
+.nl.nl .nl-campaign-hero .hero-media-frame{position:relative;inset:auto;grid-area:1/1;min-width:0}
+.nl.nl .nl-campaign-hero .nl-hero-media img,.nl.nl .nl-campaign-hero .nl-hero-media video{position:static!important;display:block;width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;object-position:center!important;transform:none!important}
+.nl.nl .nl-campaign-hero .nl-hero-overlay{display:none!important}
+.nl.nl .nl-campaign-hero .nl-hero-inner{position:relative!important;width:100%!important;max-width:1100px;height:auto!important;min-height:0!important;padding:28px 32px 18px!important;display:block!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;text-align:center;color:#fff6ef}
+.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:30px!important;line-height:1.5!important;letter-spacing:0!important;margin:10px 0!important;color:#fff6ef}
+.nl.nl .nl-campaign-hero .nl-hero-copy h1 em{display:inline;color:#efc5c7;margin-inline-start:8px}
+.nl.nl .nl-campaign-hero .nl-hero-copy p{max-width:650px!important;margin:0 auto 18px!important;color:#f1e2e4!important;line-height:1.8!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy .nl-eyebrow{justify-content:center}
+.nl.nl .nl-campaign-hero .nl-hero-link{margin:14px auto 0!important;color:#f1e2e4!important}
+.nl.nl .nl-campaign-hero .nl-hero-product,.nl.nl .nl-campaign-hero .nl-hero-circle,.nl.nl .nl-campaign-hero .nl-scroll-cue,.nl.nl .nl-campaign-hero .nl-hero-year{display:none!important}
+.nl.nl .nl-campaign-hero .nl-hero-bottom{position:relative!important;inset:auto!important;width:auto!important;margin:0 20px!important;padding:12px 0 18px!important;justify-content:center}
+@media(max-width:600px){.nl.nl .nl-campaign-hero .nl-hero-inner{padding:20px 20px 14px!important}.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:25px!important}}
