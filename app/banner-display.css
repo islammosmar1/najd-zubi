@@ -1,16 +1,25 @@
-/* Keep uploaded banners complete; do not inherit legacy half-width slides. */
-.nl.nl .nl-campaign-hero{height:auto!important;min-height:0!important;max-height:none;overflow:hidden;background:#351222}
-.nl.nl .nl-campaign-hero .nl-hero-media{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;transform:none!important;z-index:auto;display:grid}
+/* Preserve complete banner images while layering readable copy over them. */
+.nl.nl .nl-campaign-hero{position:relative;height:auto!important;min-height:0!important;max-height:none;overflow:hidden;background:#351222;isolation:isolate}
+.nl.nl .nl-campaign-hero .nl-hero-media{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;transform:none!important;z-index:0;display:grid}
 .nl.nl .nl-campaign-hero .hero-media-frame{position:relative;inset:auto;grid-area:1/1;min-width:0}
 .nl.nl .nl-campaign-hero .nl-hero-media img,.nl.nl .nl-campaign-hero .nl-hero-media video{position:static!important;display:block;width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;object-position:center!important;transform:none!important}
-.nl.nl .nl-campaign-hero .nl-hero-overlay{display:none!important}
-.nl.nl .nl-campaign-hero .nl-hero-inner{position:relative!important;width:100%!important;max-width:1100px;height:auto!important;min-height:0!important;padding:28px 32px 18px!important;display:block!important}
-.nl.nl .nl-campaign-hero .nl-hero-copy{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;text-align:center;color:#fff6ef}
-.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:30px!important;line-height:1.5!important;letter-spacing:0!important;margin:10px 0!important;color:#fff6ef}
-.nl.nl .nl-campaign-hero .nl-hero-copy h1 em{display:inline;color:#efc5c7;margin-inline-start:8px}
-.nl.nl .nl-campaign-hero .nl-hero-copy p{max-width:650px!important;margin:0 auto 18px!important;color:#f1e2e4!important;line-height:1.8!important}
-.nl.nl .nl-campaign-hero .nl-hero-copy .nl-eyebrow{justify-content:center}
-.nl.nl .nl-campaign-hero .nl-hero-link{margin:14px auto 0!important;color:#f1e2e4!important}
+.nl.nl .nl-campaign-hero .nl-hero-overlay{display:block!important;position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(29,8,20,.88),rgba(29,8,20,.35) 45%,transparent 80%)!important}
+.nl.nl .nl-campaign-hero .nl-hero-inner{position:absolute!important;inset:0!important;width:100%!important;max-width:none;height:100%!important;min-height:0!important;padding:clamp(24px,5vw,72px)!important;padding-bottom:76px!important;display:flex!important;align-items:flex-end;z-index:2;pointer-events:none}
+.nl.nl .nl-campaign-hero .nl-hero-copy{position:relative!important;inset:auto!important;width:100%!important;max-width:600px!important;margin:0!important;padding:0!important;text-align:start;color:#fff6ef;pointer-events:auto;text-shadow:0 2px 18px #210b1b80}
+.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:clamp(26px,3.4vw,52px)!important;line-height:1.35!important;letter-spacing:0!important;margin:12px 0!important;color:#fff6ef}
+.nl.nl .nl-campaign-hero .nl-hero-copy h1 em{display:inline;color:#ffdfda;margin-inline-start:8px}
+.nl.nl .nl-campaign-hero .nl-hero-copy p{max-width:510px!important;margin:0 0 20px!important;color:#fff6ef!important;line-height:1.8!important;font-size:15px!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy .nl-eyebrow{justify-content:flex-start;color:#ffe2c5}
+.nl.nl .nl-campaign-hero .nl-hero-copy .nl-button{background:#f5d4ce;color:#3c1525;border:1px solid #ffe8df;border-radius:999px;box-shadow:0 6px 24px #240b2233;text-shadow:none}
+.nl.nl .nl-campaign-hero .nl-hero-link{margin:14px 0 0!important;color:#fff6ef!important}
 .nl.nl .nl-campaign-hero .nl-hero-product,.nl.nl .nl-campaign-hero .nl-hero-circle,.nl.nl .nl-campaign-hero .nl-scroll-cue,.nl.nl .nl-campaign-hero .nl-hero-year{display:none!important}
-.nl.nl .nl-campaign-hero .nl-hero-bottom{position:relative!important;inset:auto!important;width:auto!important;margin:0 20px!important;padding:12px 0 18px!important;justify-content:center}
-@media(max-width:600px){.nl.nl .nl-campaign-hero .nl-hero-inner{padding:20px 20px 14px!important}.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:25px!important}}
+.nl.nl .nl-campaign-hero .nl-hero-bottom{position:absolute!important;inset:auto 24px 0!important;width:auto!important;margin:0!important;padding:12px 0 18px!important;justify-content:center;z-index:3}
+@media(max-width:600px){
+.nl.nl .nl-campaign-hero .nl-hero-inner{padding:12px 18px 48px!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy{max-width:100%!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy h1{font-size:clamp(18px,5.2vw,30px)!important;line-height:1.35!important;margin:0 0 9px!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy p,.nl.nl .nl-campaign-hero .nl-hero-copy .nl-eyebrow,.nl.nl .nl-campaign-hero .nl-hero-link{display:none!important}
+.nl.nl .nl-campaign-hero .nl-hero-copy .nl-button{min-height:36px;padding:8px 16px;font-size:11px;gap:10px}
+.nl.nl .nl-campaign-hero .nl-hero-bottom{inset:auto 16px 0!important;padding:5px 0 8px!important;border:0}
+.nl.nl .nl-campaign-hero .nl-hero-overlay{background:linear-gradient(0deg,rgba(29,8,20,.85),rgba(29,8,20,.38) 55%,transparent 100%)!important}
+}
