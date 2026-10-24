@@ -12,6 +12,8 @@ const {heroMedia,safeMediaUrl}=load('lib/hero-media.ts');
 assert.equal(heroMedia({heroImages:['/images/a.webp']})[0].type,'image');
 assert.equal(heroMedia({heroImages:[],heroMedia:[{type:'video',url:'https://example.com/a.mp4'}]})[0].type,'video');
 assert.equal(safeMediaUrl('javascript:alert(1)'),false);assert.equal(safeMediaUrl('//untrusted.test/a.mp4'),false);
+assert.equal(heroMedia({heroImages:['/images/old.webp'],heroMedia:[]}).length,0);
+assert.equal(heroMedia({heroImages:['/images/old.webp'],heroMedia:[{type:'image',url:'/images/a.webp',hidden:true}]}).length,0);
 const map=new Map([['najd-state-v1',JSON.stringify({wishes:['one','one',3]})]]);
 const storage={getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v)};
 let updates=0;
