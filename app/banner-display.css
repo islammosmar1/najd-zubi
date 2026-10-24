@@ -26,11 +26,9 @@
 .nl.nl .nl-campaign-hero .nl-hero-copy{overflow-wrap:anywhere}
 
 .hero-loading{aspect-ratio:16/9;width:100%;background:#f5e9ed;border-radius:24px}
-.category-carousel{position:relative;background:#faf0f2;padding:0 48px}
-.nl .category-carousel .bag-category-strip{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:28px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:28px 4px;overscroll-behavior-inline:contain}
-.nl .category-carousel .bag-category-strip::-webkit-scrollbar{display:none}
-.nl .category-carousel .bag-category-strip a{width:140px;flex:0 0 140px;min-width:0;scroll-snap-align:start}
-.nl .category-carousel .bag-category-strip a>span{width:140px;height:140px;margin:0 auto 12px}
-.category-arrow{position:absolute;top:85px;z-index:2;width:38px;height:38px;display:grid;place-items:center;border:1px solid #d8b9c3;border-radius:50%;background:#fffafa;color:#702d46;box-shadow:0 3px 12px #35122212}
-.category-prev{inset-inline-start:6px}.category-next{inset-inline-end:6px}.category-arrow:disabled{opacity:.3}
-@media(max-width:600px){.category-carousel{padding:0 36px}.nl .category-carousel .bag-category-strip{gap:18px;padding:20px 2px}.nl .category-carousel .bag-category-strip a{width:96px;flex-basis:96px}.nl .category-carousel .bag-category-strip a>span{width:96px;height:96px}.nl .category-carousel .bag-category-strip strong{font-size:12px}.category-arrow{width:30px;height:36px;top:53px}.category-prev{inset-inline-start:2px}.category-next{inset-inline-end:2px}}
+.category-carousel{background:#faf0f2;padding:24px 20px;text-align:center}
+.nl .category-carousel .bag-category-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:800px;margin:auto;gap:28px 20px;overflow:visible;padding:0}
+.nl .category-carousel .bag-category-strip a{width:100%;min-width:0}
+.nl .category-carousel .bag-category-strip a>span{width:140px;max-width:100%;height:auto;aspect-ratio:1;margin:0 auto 12px}
+.category-more{margin-top:24px;padding:12px 28px;min-height:44px;border:1px solid #9e6275;border-radius:30px;color:#702d46;background:#fffafa;font-weight:600}
+@media(max-width:600px){.category-carousel{padding:22px 16px}.nl .category-carousel .bag-category-strip{gap:22px 12px}.nl .category-carousel .bag-category-strip a>span{width:96px}.nl .category-carousel .bag-category-strip strong{font-size:12px}}

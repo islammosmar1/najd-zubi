@@ -32,3 +32,5 @@
 .studio :is(input,textarea)::placeholder{color:var(--muted);opacity:1}
 .studio .admin-tabs button{color:var(--text);font-weight:600}.studio .admin-tabs button.active{background:#702d46;color:#fff}
 .studio .btn.primary{background:#702d46;color:#fff}.studio .btn.outline{color:var(--text);border-color:var(--muted)}
+
+.product-bulk-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.product-bulk-actions>label{display:flex;align-items:center;gap:10px}.product-bulk-actions select{min-height:44px;max-width:100%;padding:8px;border:1px solid var(--line);border-radius:6px}.product-bulk-actions .check-label{flex:1 1 220px}.wholesale-coupon-notice{padding:12px;border:1px solid var(--line);border-radius:8px}
