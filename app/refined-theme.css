@@ -99,3 +99,7 @@
 /* Compact accessible launcher and full-width account editor. */
 .na-chat-launch{width:46px;height:46px;min-height:46px;padding:0;justify-content:center;border-radius:50%;gap:0}.na-chat-launch:focus-visible{outline:3px solid #c6a466;outline-offset:3px}.wholesale-edit{flex-basis:100%;width:100%;border-top:1px solid #bda69b55;padding-top:16px}.na-chat-preview{font-size:11px;color:#805152}.na-chat{bottom:78px}
 .na-filter-status{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 14px;font-size:11px;background:#b99a7810;flex-wrap:wrap}.na-filter-status button{border:0;background:transparent;color:inherit;text-decoration:underline;min-height:36px}
+
+/* Product detail gallery uses the same full-bleed 4:5 frame as cards. */
+.pd-page .pd-main-image{aspect-ratio:4/5}
+.pd-page .pd-main-image>img{position:absolute;inset:0;display:block;width:100%;height:100%;max-height:none;object-fit:cover;object-position:center;transform:none}
