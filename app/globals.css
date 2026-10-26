@@ -112,3 +112,8 @@
 .restock-phone{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}
 .restock-phone input{width:100%;min-width:0}
 @media(max-width:600px){.bag-category-strip{justify-content:flex-start;gap:18px;padding:22px 16px}.bag-category-strip a{width:96px}.bag-category-strip a>span{width:96px;height:96px}.bag-category-strip strong{font-size:13px}}
+
+/* Uniform full-bleed portrait product cards across storefront views. */
+.app.app .product-visual,.nl.nl .nx-product-photo,.nl.nl .nc-product-grid .nc-picture{aspect-ratio:4/5!important;height:auto;overflow:hidden}
+.app.app .product-visual .image-button,.nl.nl .nx-product-photo>a:first-child,.nl.nl .nc-picture .nc-image-link{display:block;width:100%;height:100%;padding:0}
+.app.app .product-visual img,.nl.nl .nx-product-photo img,.nl.nl .nc-product-grid .nc-picture img{display:block;width:100%;height:100%;object-fit:cover!important;object-position:center;padding:0}
