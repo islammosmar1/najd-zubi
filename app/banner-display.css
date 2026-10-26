@@ -34,3 +34,10 @@
 @media(max-width:767px){.category-more{display:inline-block}.nl .category-carousel .bag-category-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.nl .category-carousel .bag-category-strip .category-mobile-extra{display:none}.category-carousel{padding:22px 16px}.nl .category-carousel .bag-category-strip{gap:22px 12px}.nl .category-carousel .bag-category-strip a>span{width:96px}.nl .category-carousel .bag-category-strip strong{font-size:12px}}
 
 @media(max-width:600px){.nl.nl .nl-campaign-hero .nl-hero-copy .nl-button svg{width:14px;height:14px}}
+
+/* Category surfaces inherit the active dark palette, including the inner strip. */
+.nl.nl-dark .category-carousel{background:var(--paper);color:var(--ink)}
+.nl.nl-dark .category-carousel .bag-category-strip{background:transparent}
+.nl.nl-dark .category-carousel .bag-category-strip a{color:var(--ink)}
+.nl.nl-dark .category-carousel .bag-category-strip a>span{background:var(--soft);box-shadow:inset 0 0 0 1px var(--line)}
+.nl.nl-dark .category-carousel .category-more{background:var(--panel);color:var(--ink);border-color:var(--wine)}
