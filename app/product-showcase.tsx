@@ -5,7 +5,6 @@ import { motion,useReducedMotion } from 'framer-motion';
 import { ArrowUpRight,ChevronDown,ChevronUp,Flame,Heart,ShoppingBag,Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import type { Lang,Product,Settings } from '../lib/catalog';
-import { demoProducts } from '../lib/demo-products';
 import { categoryProducts,visibleCategoryProducts } from '../lib/taxonomy';
 import { visibleBrands,orderCollection } from '../lib/store-customization';
 import CategoryIcon from './category-icon';
@@ -15,8 +14,7 @@ export default function ProductShowcase({kind='featured',categoryId,products,set
  const category=categoryId?settings.categories.find(c=>c[0]===categoryId):undefined;
  const title=category?(category[lang==='ar'?1:lang==='en'?2:3]||category[1]):kind==='best'?t('الأكثر مبيعًا','Bestsellers','רבי מכר'):kind==='featured'?t('منتجات مميزة','The featured edit','מוצרים מומלצים'):t('وصلنا حديثًا','Just landed','חדש אצלנו');
  const actualRows=categoryId?categoryProducts(products,settings,categoryId).filter(p=>p.status==='published'&&!p.isSample&&!p.id.startsWith('demo-')&&!settings.categoryMeta?.[p.category]?.hidden&&!settings.categoryMeta?.[settings.categories.find(c=>c[0]===p.category)?.[4]||'']?.hidden):products.filter(p=>p[kind]&&p.status==='published'&&!p.isSample&&!p.id.startsWith('demo-')&&!settings.categoryMeta?.[p.category]?.hidden&&!settings.categoryMeta?.[settings.categories.find(c=>c[0]===p.category)?.[4]||'']?.hidden).sort((a,b)=>Number(b.category==='bags')-Number(a.category==='bags'));
- const samples=products.length>0&&settings.showDemoProducts? (categoryId?categoryProducts(demoProducts.slice(0,10),settings,categoryId):demoProducts.slice(0,10).filter(p=>p[kind]&&!settings.categoryMeta?.[p.category]?.hidden&&!settings.categoryMeta?.[settings.categories.find(c=>c[0]===p.category)?.[4]||'']?.hidden)):[];
- const rows=[...(categoryId?actualRows:orderCollection(actualRows,settings,kind)),...samples];const favorites=favorite;const toggle=onFavorite;
+ const rows=categoryId?actualRows:orderCollection(actualRows,settings,kind);const favorites=favorite;const toggle=onFavorite;
  const bags=categoryId==='bags',base=bags?16:kind==='best'?12:8;const href=categoryId?'/shop?category='+encodeURIComponent(categoryId):'/shop?collection='+kind;
  return <section className={'nc-showcase nc-grid-section nc-'+kind+(bags?' nc-bags-first':'')} id={categoryId?'category-'+categoryId:kind}><div className="nl-container"><div className="nc-heading"><div><span className="nl-eyebrow nl-eyebrow-dark">{bags?'THE HANDBAG ATELIER':categoryId?'THE NAJD COLLECTION':kind==='best'?'THE MOST LOVED':kind==='featured'?'CHOSEN WITH LOVE':'JUST ARRIVED'}</span><h2><span className="nc-category-symbol">{categoryId?<CategoryIcon kind={categoryId}/>:kind==='best'?<Flame/>:<Sparkles/>}</span>{title}</h2><p>{bags?t('من صباحكِ إلى مناسباتكِ… شنطة لكل لحظة.','From everyday moments to special evenings.','מרגעי היום־יום ועד לערבים מיוחדים.'):t('تفاصيل جميلة، انتقيناها لكِ.','Beautiful details, thoughtfully selected.','פרטים יפים שנבחרו בקפידה.')}</p></div><span className="nc-edit-number">{bags?'01':kind==='best'?'02':kind==='isNew'?'03':kind==='featured'?'04':'NAJD'}<ShoppingBag size={18}/></span></div>
  {categoryId&&<div className="category-brand-links">{visibleBrands(settings,categoryId).map(b=><a key={b} href={'/shop?category='+encodeURIComponent(categoryId)+'&brand='+encodeURIComponent(b)}>{settings.brandMeta?.[b]?.image&&<img src={settings.brandMeta[b].image} alt="" loading="lazy"/>}{b}</a>)}</div>}

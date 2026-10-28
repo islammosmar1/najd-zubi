@@ -5,7 +5,6 @@ import {useWishlist} from '../lib/wishlist';
 import {heroCopy} from '../lib/hero-copy';
 import {heroMedia} from '../lib/hero-media';
 import HeroVisual from './hero-media';
-import {demoProducts} from '../lib/demo-products';
 import { portableAssetUrl } from '../lib/assets';
 import { themeVariables,visibleBrands } from '../lib/store-customization';
 import './store-customization.css';
@@ -43,7 +42,7 @@ const slides=settingsLoaded?heroMedia(shopSettings):[];
 const categoryImage=(id:string)=>shopSettings.categoryMeta?.[id]?.image||products.find(p=>p.category===id&&p.images[0])?.images[0]||'';
 const assets={hero:categoryImage('fragrance')||categoryImage('gifts'),portrait:categoryImage('makeup'),skin:categoryImage('skin')};
 const bannerCopy=heroCopy(slides[slide],Math.max(0,shopSettings.heroMedia?.indexOf(slides[slide])??slide),lang);
-const favoriteProducts=[...products,...demoProducts.filter(p=>!products.some(x=>x.id===p.id))].filter(p=>favorite.includes(p.id));
+const favoriteProducts=products.filter(p=>favorite.includes(p.id));
 
 const menuRef=useRef<HTMLDivElement>(null),menuButtonRef=useRef<HTMLButtonElement>(null);
 useEffect(()=>{if(!menu)return;const outside=(e:PointerEvent)=>{if(e.target instanceof Node&&!menuRef.current?.contains(e.target)&&!menuButtonRef.current?.contains(e.target))setMenu(false)};const key=(e:KeyboardEvent)=>{if(e.key==='Escape'){setMenu(false);menuButtonRef.current?.focus()}};document.addEventListener('pointerdown',outside);document.addEventListener('keydown',key);return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',key)}},[menu]);

@@ -1,4 +1,3 @@
-import { demoProducts } from './demo-products';
 import { cache } from 'react';
 import { publicConfig } from './public-config';
 // Public-only credentials: metadata must never contain wholesale prices or customer data.
@@ -12,7 +11,7 @@ async function query(params:Record<string,string>){
 export type PublicProduct={id:string;data:{name?:{ar?:string};description?:{ar?:string};images?:string[];isSample?:boolean}};
 export const getPublicProduct=cache(async(id:string):Promise<PublicProduct|null>=>{
  if(!id||id.length>100)return null;
- if(id.startsWith('demo-')){const p=demoProducts.find(p=>p.id===id);return p?{id:p.id,data:{name:p.name,description:p.description,images:p.images,isSample:true}}:null;}
+ if(id.startsWith('demo-'))return null;
  const rows=await query({select:'id,data',id:'eq.'+id,status:'eq.published',or:'(data->>isSample.is.null,data->>isSample.neq.true)',limit:'1'});
  return rows.length?rows[0] as PublicProduct:null;
 });
