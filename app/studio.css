@@ -34,3 +34,5 @@
 .studio .btn.primary{background:#702d46;color:#fff}.studio .btn.outline{color:var(--text);border-color:var(--muted)}
 
 .product-bulk-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.product-bulk-actions>label{display:flex;align-items:center;gap:10px}.product-bulk-actions select{min-height:44px;max-width:100%;padding:8px;border:1px solid var(--line);border-radius:6px}.product-bulk-actions .check-label{flex:1 1 220px}.wholesale-coupon-notice{padding:12px;border:1px solid var(--line);border-radius:8px}
+
+.studio .product-image-thumbs{flex-wrap:wrap;gap:12px}.studio .product-image-thumbs>div{display:grid;grid-template-columns:1fr auto;gap:4px;width:112px;padding:6px;border:1px solid var(--line);border-radius:10px}.studio .product-image-thumbs img{grid-column:1/-1;width:98px;height:122px;object-fit:cover}.studio .product-image-thumbs button{min-height:40px;display:flex;align-items:center;justify-content:center;gap:4px}.studio .product-image-thumbs .product-image-remove{color:#a7172d;background:#fff0f2;border-radius:6px;padding:6px}
