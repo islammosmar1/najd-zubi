@@ -38,3 +38,5 @@
 .studio .product-image-thumbs{flex-wrap:wrap;gap:12px}.studio .product-image-thumbs>div{display:grid;grid-template-columns:1fr auto;gap:4px;width:112px;padding:6px;border:1px solid var(--line);border-radius:10px}.studio .product-image-thumbs img{grid-column:1/-1;width:98px;height:122px;object-fit:cover}.studio .product-image-thumbs button{min-height:40px;display:flex;align-items:center;justify-content:center;gap:4px}.studio .product-image-thumbs .product-image-remove{color:#a7172d;background:#fff0f2;border-radius:6px;padding:6px}
 
 .studio .bulk-edit-fields{flex-basis:100%;width:100%;min-width:0;display:grid;gap:10px;padding:16px;border:1px solid var(--line);border-radius:12px}.studio .bulk-edit-fields p{margin:0}.studio .bulk-edit-fields input:not([type=checkbox]){width:100%;min-width:0}.studio .bulk-edit-fields .row{flex-wrap:wrap}
+
+.studio .product-quick-name{min-width:0}.studio .quick-name-trigger{display:flex;align-items:center;gap:5px;margin-top:6px}.studio .quick-name-editor{display:grid;gap:8px;min-width:180px;width:min(300px,65vw)}.studio .quick-name-editor input{width:100%;min-width:0}.studio .quick-name-editor .row{flex-wrap:wrap;gap:6px}
