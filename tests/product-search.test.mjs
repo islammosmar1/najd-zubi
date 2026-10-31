@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+const js=ts.transpileModule(fs.readFileSync('lib/product-search.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {matchesProductSearch:match}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const p={name:{ar:'شنطة كتف بتعليقة حصان — أسود',en:'Horse-charm shoulder bag — Black',he:'תיק כתף שחור'},brand:'NZ',sku:'BAG-42',category:'bags',keywords:[]};
+for(const q of ['شنطة سوداء','  أسود   حصان ','حقيبة سودا','شنط اسود','شَنْطَة أَسْوَد','الشنطة السوداء','black horse','שחור','bag 42','   '])assert.equal(match(p,q),true,q);
+for(const q of ['وردي','حصان أحمر','no-such-product'])assert.equal(match(p,q),false,q);
+assert.equal(match(p,'شنط كبيرة',{categories:[['bags','شنط كبيرة','Large bags','תיקים גדולים','']]}),true);
+assert.equal(match(p,'شنط صغيرة',{categories:[['bags','شنط كبيرة','Large bags','תיקים גדולים','']]}),false);
+console.log('PASS Arabic spelling, diacritics, color synonyms, reordered words, whitespace, multilingual, category and SKU search; unrelated colors excluded');
