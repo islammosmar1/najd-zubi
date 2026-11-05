@@ -70,16 +70,20 @@ export default function ProductOrder({
 
   async function assignProductsToCategory() {
     if (!db) return toast(t('اتصال قاعدة البيانات مطلوب', 'Database connection required', 'נדרש חיבור למסד נתונים'));
-    if (!assignCategory || !selectedIds.length) return;
+    if (busy || dirty || !categories.some((item) => item[0] === assignCategory) || !selectedIds.length) return;
 
     setBusy(true);
     try {
-      const { error } = await db.from('products').update({ category: assignCategory }).in('id', selectedIds);
+      const { data, error } = await db.rpc('assign_product_categories', { category_id: assignCategory, product_ids: selectedIds });
       if (error) throw error;
+      if (data !== selectedIds.length) throw new Error(t('لم يتم تحديث جميع المنتجات؛ أعيدي المحاولة', 'Not all products were updated; try again', 'לא כל המוצרים עודכנו; נסו שוב'));
       onSaved((current) =>
         current.map((product) => (selectedIds.includes(product.id) ? { ...product, category: assignCategory } : product)),
       );
       setSelectedIds([]);
+      setIds([]);
+      setDirty(false);
+      setDrag(null);
       toast(t('تم تعيين المنتجات للقسم المختار', 'Products were assigned to the selected category', 'המוצרים שויכו לקטגוריה שנבחרה'));
     } catch (caught: unknown) {
       toast(asError(caught).message);
@@ -182,12 +186,13 @@ export default function ProductOrder({
               </option>
             ))}
           </select>
-          <button type="button" className="btn primary" disabled={busy || !assignCategory || !selectedIds.length} onClick={assignProductsToCategory}>
+          <button type="button" className="btn primary" disabled={busy || dirty || !assignCategory || !selectedIds.length} onClick={assignProductsToCategory}>
             {busy
               ? t('جارٍ التعيين…', 'Assigning…', 'משייך…')
               : t(`تعيين القسم (${selectedIds.length})`, `Assign category (${selectedIds.length})`, `שיוך קטגוריה (${selectedIds.length})`)}
           </button>
         </div>
+        {dirty && <p role="status">{t('احفظي ترتيب المنتجات أو اضغطي تراجع قبل تعيين القسم.', 'Save or reset the product order before assigning a category.', 'שמרו או אפסו את סדר המוצרים לפני שיוך קטגוריה.')}</p>}
         <ol className="product-order-list">
           {selectableProducts.map((product) => (
             <li key={product.id}>
