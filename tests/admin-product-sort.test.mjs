@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+const exports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('lib/admin-product-sort.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports});
+const rows=[{id:'old',createdAt:'2026-10-01',price:50,name:{ar:'ب',en:'B',he:'ב'}},{id:'missing',price:20,name:{ar:'ج',en:'C',he:'ג'}},{id:'new',createdAt:'2026-11-06',price:10,name:{ar:'أ',en:'A',he:'א'}}];
+const ids=sort=>Array.from(exports.sortAdminProducts(rows,sort,'en'),p=>p.id);
+assert.deepEqual(ids('newest'),['new','old','missing']);
+assert.deepEqual(ids('oldest'),['old','new','missing']);
+assert.deepEqual(ids('price-low'),['new','missing','old']);
+assert.deepEqual(ids('price-high'),['old','missing','new']);
+assert.deepEqual(ids('name'),['new','old','missing']);
+assert.equal(rows[0].id,'old');
+console.log('PASS admin creation-date ordering, missing dates last, name/price sorting and unchanged source array');
