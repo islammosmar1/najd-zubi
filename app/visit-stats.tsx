@@ -1,0 +1,11 @@
+'use client';
+import {useEffect,useState} from 'react';
+import type {Lang} from '../lib/catalog';
+import {db} from '../lib/supabase';
+type Stats={visitors_today:number;visitors_total:number;visits_today:number;visits_total:number};
+export default function VisitStats({lang}:{lang:Lang}){
+ const [stats,setStats]=useState<Stats|null>(null),[error,setError]=useState(false),[refresh,setRefresh]=useState(0);
+ const t=(ar:string,en:string,he:string)=>lang==='ar'?ar:lang==='he'?he:en;
+ useEffect(()=>{let active=true;async function load(){if(!db)return;try{const {data,error}=await db.rpc('site_visit_stats');if(!active)return;if(error||!data){setError(true);return;}setStats(data);setError(false);}catch{if(active)setError(true)}}void load();const timer=setInterval(()=>void load(),60000);return()=>{active=false;clearInterval(timer)}},[refresh]);
+ return <section className="panel"><h3>{t('زوار الموقع','Website visitors','מבקרי האתר')}</h3>{error?<p role="alert">{t('تعذر تحميل الإحصاءات','Could not load statistics','לא ניתן לטעון נתונים')}</p>:<div className="stats">{[ ['visitors_today',t('زوار اليوم','Visitors today','מבקרים היום')],['visits_today',t('زيارات اليوم','Visits today','ביקורים היום')],['visitors_total',t('إجمالي الزوار','Total visitors','סך המבקרים')],['visits_total',t('إجمالي الزيارات','Total visits','סך הביקורים')] ].map(([key,label])=><div key={key}><small>{label}</small><strong>{stats?Number(stats[key as keyof Stats]).toLocaleString(lang):'…'}</strong></div>)}</div>}<p>{t('العد يبدأ من تفعيل الميزة. الزائر متصفح مميز، والزيارة تتجدد بعد 30 دقيقة من عدم النشاط. الأرقام تقديرية؛ مسح بيانات المتصفح أو استخدام جهاز آخر يحسب زائرًا جديدًا. اليوم حسب توقيت فلسطين.','Counting starts when enabled. Visitors are distinct browsers; visits restart after 30 minutes of inactivity. Counts are estimates; another device or cleared browser data counts as a new visitor. Days use Palestine time.','הספירה מתחילה מההפעלה. מבקר הוא דפדפן נפרד; ביקור מתחדש לאחר 30 דקות ללא פעילות. הנתונים משוערים, ומכשיר אחר או ניקוי נתונים נספרים מחדש. היום לפי שעון פלסטין.')}</p><button type="button" className="btn outline" onClick={()=>setRefresh(n=>n+1)}>{t('تحديث الإحصاءات','Refresh statistics','רענון נתונים')}</button></section>;
+}
