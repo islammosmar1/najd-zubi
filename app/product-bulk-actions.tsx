@@ -24,6 +24,7 @@ export default function ProductBulkActions({products,visible,selected,setSelecte
    for(const p of rows){try{
     if(action==='edit')await save({...p,...(changeName?{name:{...p.name,[nameLang]:name.trim()}}:{}),...(changeRetail?{price:Number(retail)}:{})},changeWholesale?wholesale:undefined);
     else if(action==='delete')await remove(p);
+    else if(action==='soldout')await save({...p,stock:0,variants:p.variants?.map(v=>({...v,stock:0}))});
     else if(action==='featured'||action==='unfeatured')await save({...p,featured:action==='featured'});
     else if(action==='best'||action==='unbest')await save({...p,best:action==='best'});
     else if(action==='new'||action==='unnew')await save({...p,isNew:action==='new'});
@@ -41,7 +42,7 @@ export default function ProductBulkActions({products,visible,selected,setSelecte
  <strong aria-live="polite">{rows.length} {t('محدد','selected','נבחרו')}</strong>
  {rows.length>0&&<button type="button" className="btn outline" disabled={busy} onClick={()=>setSelected([])}>{t('إلغاء التحديد','Clear selection','ביטול בחירה')}</button>}
  {canWrite&&<><label>{t('الإجراء','Action','פעולה')}<select value={action} disabled={busy||!rows.length} onChange={e=>setAction(e.target.value)}><option value="">{t('اختاري إجراء','Choose an action','בחרו פעולה')}</option>{[
- ['edit',t('تعديل الاسم والأسعار','Edit name and prices','עריכת שם ומחירים')],['hidden',t('إخفاء','Hide','הסתרה')],['published',t('نشر / إظهار','Publish / show','פרסום')],['draft',t('نقل إلى المسودات','Move to drafts','העברה לטיוטות')],['archived',t('أرشفة','Archive','ארכיון')],['featured',t('إضافة للمميزة','Mark featured','סימון כמומלץ')],['unfeatured',t('إزالة من المميزة','Remove featured','הסרת המלצה')],['best',t('إضافة للأكثر مبيعًا','Add to bestsellers','הוספה לרבי מכר')],['unbest',t('إزالة من الأكثر مبيعًا','Remove from bestsellers','הסרה מרבי מכר')],['new',t('إضافة لوصلنا حديثًا','Add to new arrivals','הוספה לחדשים')],['unnew',t('إزالة من وصلنا حديثًا','Remove from new arrivals','הסרה מחדשים')],['discount',t('خصم جماعي','Bulk discount','הנחה מרובה')],['delete',t('حذف نهائي','Permanently delete','מחיקה לצמיתות')]
+ ['soldout',t('بيعت كلها','Mark sold out','סימון כאזל')],['edit',t('تعديل الاسم والأسعار','Edit name and prices','עריכת שם ומחירים')],['hidden',t('إخفاء','Hide','הסתרה')],['published',t('نشر / إظهار','Publish / show','פרסום')],['draft',t('نقل إلى المسودات','Move to drafts','העברה לטיוטות')],['archived',t('أرشفة','Archive','ארכיון')],['featured',t('إضافة للمميزة','Mark featured','סימון כמומלץ')],['unfeatured',t('إزالة من المميزة','Remove featured','הסרת המלצה')],['best',t('إضافة للأكثر مبيعًا','Add to bestsellers','הוספה לרבי מכר')],['unbest',t('إزالة من الأكثر مبيعًا','Remove from bestsellers','הסרה מרבי מכר')],['new',t('إضافة لوصلنا حديثًا','Add to new arrivals','הוספה לחדשים')],['unnew',t('إزالة من وصلنا حديثًا','Remove from new arrivals','הסרה מחדשים')],['discount',t('خصم جماعي','Bulk discount','הנחה מרובה')],['delete',t('حذف نهائي','Permanently delete','מחיקה לצמיתות')]
  ].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
  {action==='edit'&&<fieldset className="bulk-edit-fields" disabled={busy}>
  <legend>{t('تعديل المنتجات المحددة','Edit selected products','עריכת המוצרים שנבחרו')}</legend>
