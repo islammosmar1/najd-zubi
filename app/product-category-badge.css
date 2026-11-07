@@ -1,0 +1,2 @@
+.product-category-badge{display:table!important;max-width:100%;width:fit-content;padding:4px 10px;margin:0 0 8px;border:1px solid #b58b6255;border-radius:999px;background:#b58b6214;color:inherit;font:500 11px/1.5 'Noto Sans Arabic','Noto Sans Hebrew',sans-serif;letter-spacing:0;white-space:normal;overflow-wrap:anywhere;text-align:start}
+@media(max-width:600px){.product-category-badge{font-size:10px;padding:3px 8px;margin-bottom:6px}}
