@@ -1,5 +1,6 @@
 'use client';
 import {sortAdminProducts,type AdminProductSort} from '../lib/admin-product-sort';
+import {adminLocationKey,readAdminLocation} from '../lib/admin-navigation';
 import {matchesProductSearch} from '../lib/product-search';
 import ProductQuickName from './product-quick-name';
 import ProductBulkActions from './product-bulk-actions';
@@ -8,7 +9,7 @@ import OrderProducts from './order-products';
 import {useOrderAlerts} from '../lib/order-alerts';
 import {safeMediaUrl} from '../lib/hero-media';
 import { BarChart3,Check,Download,Edit3,LogOut,Package,Plus,Settings as SettingsIcon,ShoppingBag,Sparkles,Trash2,Upload } from 'lucide-react';
-import { useCallback,useEffect,useState } from 'react';
+import { useCallback,useRef,useEffect,useState } from 'react';
 import { categories as baseCategories,type Lang,type Order,type Product,type Settings } from '../lib/catalog';
 import { productExport,readSpreadsheet,spreadsheet,statuses,statusName } from '../lib/commerce';
 import { visibleBrands } from '../lib/store-customization';
@@ -35,6 +36,12 @@ import VariantEditor from './variant-editor';
 import WholesaleAdmin from './wholesale-admin';
 type Props={products:Product[];setProducts:React.Dispatch<React.SetStateAction<Product[]>>;settings:Settings;setSettings:React.Dispatch<React.SetStateAction<Settings>>;orders:Order[];setOrders:React.Dispatch<React.SetStateAction<Order[]>>;lang:Lang;toast:(s:string)=>void;admin:boolean;setAdmin:(b:boolean)=>void};
 export default function Admin({products,setProducts,settings,setSettings,orders,setOrders,lang,toast,admin,setAdmin}:Props){const tr=useCallback((a:string,b:string,c:string)=>lang==='ar'?a:lang==='he'?c:b,[lang]);const [wholesalePrice,setWholesalePrice]=useState(''),[wholesaleLoaded,setWholesaleLoaded]=useState<string|null>(null);const [nameTranslating,setNameTranslating]=useState(false),[editLang,setEditLang]=useState<Lang>('ar'),[advanced,setAdvanced]=useState(false),[selectedIds,setSelectedIds]=useState<string[]>([]),[rolePermissions,setRolePermissions]=useState<string[]>([]),[tab,setTab]=useState('overview'),[editing,setEditing]=useState<Product|null>(null),[productSort,setProductSort]=useState<AdminProductSort>('newest'),[search,setSearch]=useState(''),[status,setStatus]=useState('all'),[draftSettings,setDraftSettings]=useState(JSON.stringify(settings,null,2)),[bulk,setBulk]=useState<Product[]>([]),[bulkBrand,setBulkBrand]=useState(''),[cropImages,setCropImages]=useState(false),[previewProduct,setPreviewProduct]=useState(false),[bulkPrice,setBulkPrice]=useState(100),[bulkStock,setBulkStock]=useState(10),[bulkCat,setBulkCat]=useState(settings.categories.find(c=>c[0]!=='all')?.[0]||''),[busy,setBusy]=useState(false),[orderEdit,setOrderEdit]=useState<Order|null>(null);const categories=settings.categories||baseCategories;const catName=(id:string)=>categories.find(c=>c[0]===id)?.[lang==='ar'?1:lang==='en'?2:3]||id;
+const adminLocation={tab,productId:editing?.id||null,orderId:orderEdit?.id||null};
+const navKey=adminLocationKey(adminLocation),lastNav=useRef(navKey),navReady=useRef(false),navProducts=useRef(products),navOrders=useRef(orders);navProducts.current=products;navOrders.current=orders;
+useEffect(()=>{if(!admin)return;const root={tab:'overview',productId:null,orderId:null};history.replaceState({...history.state,najdAdmin:root,najdAdminExit:true},'',location.href);history.pushState({...history.state,najdAdmin:root,najdAdminExit:false},'',location.href);navReady.current=true;lastNav.current=adminLocationKey(root);
+ const back=(event:PopStateEvent)=>{const target=readAdminLocation(event.state);if(!target)return;if(event.state?.najdAdminExit){location.replace('/');return;}lastNav.current=adminLocationKey(target);setTab(target.tab);setEditing(target.productId?navProducts.current.find(p=>p.id===target.productId)||null:null);setOrderEdit(target.orderId?navOrders.current.find(o=>o.id===target.orderId)||null:null);setPreviewProduct(false);};window.addEventListener('popstate',back);return()=>{navReady.current=false;window.removeEventListener('popstate',back)};
+},[admin]);
+useEffect(()=>{if(!admin||!navReady.current||lastNav.current===navKey)return;const [oldTab,oldProduct,oldOrder]=JSON.parse(lastNav.current);const [nextTab,productId,orderId]=JSON.parse(navKey);lastNav.current=navKey;const state={...history.state,najdAdmin:{tab:nextTab,productId,orderId},najdAdminExit:false};if(oldTab===nextTab&&(oldProduct||oldOrder)&&!productId&&!orderId)history.replaceState(state,'',location.href);else history.pushState(state,'',location.href);},[admin,navKey]);
 const alerts=useOrderAlerts(admin,setOrders,toast,tr('وصل طلب جديد','New order received','התקבלה הזמנה חדשה'));
 const [previousSettings,setPreviousSettings]=useState(settings);if(previousSettings!==settings){setPreviousSettings(settings);setDraftSettings(JSON.stringify(settings))}
 useEffect(()=>{if(db&&admin){Promise.all([db.from('products').select('*'),db.from('product_costs').select('*')]).then(([p,c])=>{if(p.error){toast(p.error.message);return}setProducts((p.data||[]).map(row=>({...row.data,createdAt:row.created_at,id:row.id,price:row.price,stock:row.stock,status:row.status,sku:row.sku,barcode:row.barcode,cost:c.data?.find(x=>x.id===row.id)?.cost||0})))})}},[admin,setOrders,setProducts,toast]);
