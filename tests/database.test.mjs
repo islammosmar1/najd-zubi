@@ -221,4 +221,16 @@ await assert.rejects(()=>rpc('coupon_sales_report',['2025-02-01','2025-01-01']),
 console.log('PASS coupon reporting: 40 codes, >1000 orders, inclusive Hebron dates, net excluding delivery, delivered split, cancellations/returns excluded, and guest/wholesale/unauthorized-staff denial.');
 await db.exec('reset role');
 
+await db.exec(fs.readFileSync('supabase/admin-delete-orders.sql','utf8'));
+await db.exec('reset role');await db.query("update products set status='published' where id='qa-variants'");await db.exec('set role service_role');await claim('');
+const deletionOrder=await rpc('place_verified_order',[null,{...vCustomer,phone:'+972500008889'},black,0,'']);
+assert.equal((await db.query("select (data->'variants'->0->>'stock')::int n from products where id='qa-variants'")).rows[0].n,0);
+await db.exec('set role authenticated');await claim('22222222-2222-4222-8222-222222222222');await assert.rejects(()=>rpc('delete_order',[deletionOrder.id,1]),/Forbidden/);
+await claim('11111111-1111-4111-8111-111111111111','aal2');await assert.rejects(()=>rpc('delete_order',[deletionOrder.id,999]),/Order changed/);
+await rpc('delete_order',[deletionOrder.id,1]);
+assert.equal((await db.query("select count(*)::int n from orders where id=$1",[deletionOrder.id])).rows[0].n,0);
+assert.equal((await db.query("select stock from products where id='qa-variants'")).rows[0].stock,4);
+assert.equal((await db.query("select (data->'variants'->0->>'stock')::int n from products where id='qa-variants'")).rows[0].n,1);
+await assert.rejects(()=>rpc('delete_order',[deletionOrder.id,1]),/Order not found/);
+console.log('PASS delete order: unauthorized denial, stale version denial, exact option and total restoration, missing-order denial.');
 await db.close();console.log('PASS variant stock: total synchronization, option oversell denial, atomic edits and rollback, cancellation restores correct options.');

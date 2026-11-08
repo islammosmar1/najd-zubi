@@ -9,6 +9,8 @@ begin
  if o.status not in ('cancelled','returned','delivered','completed') then
  perform 1 from public.products where id in(select x->>'id' from jsonb_array_elements(o.items) x) order by id for update;
  update public.products p set stock=p.stock+q.qty from (select x->>'id' id,sum((x->>'qty')::integer)::integer qty from jsonb_array_elements(o.items) x group by x->>'id') q where p.id=q.id;
+ -- Release option reservations through the existing UPDATE trigger as well.
+ update public.orders set status='cancelled',version=version+1,updated_at=now() where id=o.id;
  end if;
  delete from public.orders where id=o.id;
  return o.id;
