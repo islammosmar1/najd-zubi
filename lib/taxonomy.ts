@@ -11,4 +11,12 @@ export function moveItem<T>(items:T[],index:number,delta:number){const next=[...
 export function homepageCategories(settings:Settings){return settings.categories.filter(c=>c[0]!=='all'&&!settings.categoryMeta?.[c[0]]?.hidden&&!settings.categoryMeta?.[c[4]]?.hidden&&(settings.categoryMeta?.[c[0]]?.home??!c[4]));}
 export function visibleCategoryProducts(products:Product[],settings:Settings,id:string){return categoryProducts(products,settings,id).filter(p=>p.status==='published'&&p.stock>0&&!p.isSample&&!p.id.startsWith('demo-')&&!settings.categoryMeta?.[p.category]?.hidden&&!settings.categoryMeta?.[settings.categories.find(c=>c[0]===p.category)?.[4]||'']?.hidden);}
 
-export function sortProducts(products:Product[]){return [...products].sort((a,b)=>(Number.isFinite(a.sortOrder)?a.sortOrder!:Number.MAX_SAFE_INTEGER)-(Number.isFinite(b.sortOrder)?b.sortOrder!:Number.MAX_SAFE_INTEGER));}
+export function sortProducts(products:Product[]){
+ const created=(p:Product)=>{const time=Date.parse(p.createdAt||'');return Number.isFinite(time)?time:0;};
+ return [...products].sort((a,b)=>{
+  const aOrdered=Number.isFinite(a.sortOrder),bOrdered=Number.isFinite(b.sortOrder);
+  // Newly added products lead until the administrator saves their position.
+  if(aOrdered!==bOrdered)return aOrdered?1:-1;
+  return (aOrdered&&bOrdered?a.sortOrder!-b.sortOrder!:0)||created(b)-created(a);
+ });
+}

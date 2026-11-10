@@ -29,3 +29,10 @@ assert.deepEqual(visibleCategoryProducts([{id:'sample',category:'bags',stock:0,s
 const ordered=[{...stock[0],sortOrder:2},{...stock[1],sortOrder:1}];assert.deepEqual(visibleCategoryProducts(ordered,home,'bags').map(p=>p.id),['mini','bag']);assert.deepEqual(ordered.map(p=>p.id),['bag','mini']);
 
 assert.deepEqual(visibleCategoryProducts([{id:'demo-old',category:'bags',stock:5,status:'published'}],home,'bags'),[]);
+
+const {sortProducts}=await load('lib/taxonomy.ts');
+const ordering=[{id:'manual-second',sortOrder:2,createdAt:'2026-11-10'},{id:'older',createdAt:'2026-11-08'},{id:'manual-first',sortOrder:1,createdAt:'2026-11-07'},{id:'newest',createdAt:'2026-11-10'},{id:'unknown'}];
+assert.deepEqual(sortProducts(ordering).map(p=>p.id),['newest','older','unknown','manual-first','manual-second']);
+assert.equal(ordering[0].id,'manual-second');
+assert.deepEqual(sortProducts(ordering.map((p,i)=>({...p,sortOrder:i+1}))).map(p=>p.id),ordering.map(p=>p.id));
+console.log('PASS: new products lead by creation date; saved admin positions override dates after ordering.');
