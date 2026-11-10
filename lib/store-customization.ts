@@ -15,4 +15,8 @@ export function visibleBrands(settings:Settings,category?:string,home=false){ret
  return meta.categoryIds.some(id=>id===category||id===parent||settings.categories.some(c=>c[0]===id&&c[4]===category));
 })}
 export type CollectionKind='best'|'featured'|'isNew';
-export function orderCollection(products:import('./catalog').Product[],settings:Settings,kind:CollectionKind){const ids=settings.collectionOrder?.[kind]||[];const ranks=new Map(ids.map((id,i)=>[id,i]));return [...products].sort((a,b)=>(ranks.get(a.id)??Number.MAX_SAFE_INTEGER)-(ranks.get(b.id)??Number.MAX_SAFE_INTEGER)||(a.sortOrder??Number.MAX_SAFE_INTEGER)-(b.sortOrder??Number.MAX_SAFE_INTEGER));}
+export function orderCollection(products:import('./catalog').Product[],settings:Settings,kind:CollectionKind){
+ const ids=settings.collectionOrder?.[kind]||[];const ranks=new Map(ids.map((id,i)=>[id,i]));
+ const created=(p:import('./catalog').Product)=>{const n=Date.parse(p.createdAt||'');return Number.isFinite(n)?n:0;};
+ return [...products].sort((a,b)=>(kind==='isNew'?created(b)-created(a):0)||(ranks.get(a.id)??Number.MAX_SAFE_INTEGER)-(ranks.get(b.id)??Number.MAX_SAFE_INTEGER)||(a.sortOrder??Number.MAX_SAFE_INTEGER)-(b.sortOrder??Number.MAX_SAFE_INTEGER));
+}
