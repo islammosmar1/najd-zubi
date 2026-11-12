@@ -233,4 +233,25 @@ assert.equal((await db.query("select stock from products where id='qa-variants'"
 assert.equal((await db.query("select (data->'variants'->0->>'stock')::int n from products where id='qa-variants'")).rows[0].n,1);
 await assert.rejects(()=>rpc('delete_order',[deletionOrder.id,1]),/Order not found/);
 console.log('PASS delete order: unauthorized denial, stale version denial, exact option and total restoration, missing-order denial.');
+await db.exec('reset role');await claim('');
+await db.exec(fs.readFileSync('supabase/migrations/20261112101256_coupon_product_price_rules.sql','utf8'));
+await db.exec(`update store_settings set data=jsonb_set(data,'{categories}',data->'categories'||'[["coupon-child","Child","Child","Child","bags"]]'::jsonb) where id=1;
+insert into products(id,price,stock,status,data) values
+('coupon-low',30,20,'published','{"category":"coupon-child","sizes":["Standard"]}'),
+('coupon-high',60,20,'published','{"category":"bags","sizes":["Standard"]}'),
+('coupon-out',61,20,'published','{"category":"bags","sizes":["Standard"]}'),
+('coupon-other',40,20,'published','{"category":"skin","sizes":["Standard"]}');
+insert into coupons(code,kind,value,category_ids,min_product_price,max_product_price) values('RANGEQA','percent',10,array['bags'],30,60);`);
+const ruleLines=['coupon-low','coupon-high','coupon-out','coupon-other'].map(id=>({id,qty:1,size:'Standard'}));
+const ruleQuote=await rpc('checkout_quote',[customer,ruleLines,0,'RANGEQA']);assert.equal(ruleQuote.discount,9);
+await assert.rejects(()=>rpc('checkout_quote',[customer,[ruleLines[2]],0,'RANGEQA']),/Coupon conditions not met/);
+await assert.rejects(()=>db.exec("update coupons set min_product_price=70 where code='RANGEQA'"),/check constraint/);
+await assert.rejects(()=>db.exec("update coupons set max_product_price=-1 where code='RANGEQA'"),/check constraint/);
+await db.exec("update coupons set kind='fixed',value=200 where code='RANGEQA'");assert.equal((await rpc('checkout_quote',[customer,ruleLines,0,'RANGEQA'])).discount,90);
+await db.exec("update coupons set kind='shipping',min_quantity=0 where code='RANGEQA'");await assert.rejects(()=>rpc('checkout_quote',[customer,[ruleLines[3]],0,'RANGEQA']),/Coupon conditions not met/);
+await db.exec("update coupons set kind='percent',value=10,min_product_price=null,max_product_price=null,category_ids='{}' where code='RANGEQA'");assert.equal((await rpc('checkout_quote',[customer,ruleLines,0,'RANGEQA'])).discount,19.1);
+await db.exec("update coupons set min_product_price=30,max_product_price=60,category_ids=array['bags'],product_ids=array['coupon-high'] where code='RANGEQA'");assert.equal((await rpc('checkout_quote',[customer,ruleLines,0,'RANGEQA'])).discount,6);
+await db.exec('set role service_role');const ruleOrder=await rpc('place_order',[customer,ruleLines,0,'RANGEQA']);assert.equal(ruleOrder.discount,6);
+console.log('PASS coupon price bounds: inclusive unit prices, mixed cart, parent categories, product intersection, no-match denial, fixed cap, shipping denial, unrestricted legacy behavior and placed order.');
+
 await db.close();console.log('PASS variant stock: total synchronization, option oversell denial, atomic edits and rollback, cancellation restores correct options.');
