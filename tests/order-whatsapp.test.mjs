@@ -1,0 +1,16 @@
+import fs from 'node:fs';import vm from 'node:vm';import ts from 'typescript';import assert from 'node:assert/strict';
+const compile=s=>ts.transpileModule(s,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {orderWhatsAppUrl}=await import('data:text/javascript;base64,'+Buffer.from(compile(fs.readFileSync('lib/order-whatsapp.ts','utf8'))).toString('base64'));
+const order={id:'NAJD-123',name:'Buyer',phone:'0500000000',city:'City',address:'Address',items:[{id:'one',qty:2,price:35,product:{name:{ar:'شنطة',en:'Bag',he:'תיק'}}}],subtotal:70,discount:5,delivery:20,total:85};
+for(const lang of ['ar','en','he']){const u=new URL(orderWhatsAppUrl('970599338951',order,lang));assert.equal(u.hostname,'wa.me');assert.ok(u.searchParams.get('text').includes('NAJD-123'));assert.ok(u.searchParams.get('text').includes('85 ₪'));assert.ok(!u.searchParams.get('text').includes('undefined'));}
+assert.equal(orderWhatsAppUrl('',order,'ar'),null);assert.equal(orderWhatsAppUrl('970599338951',{...order,id:''},'ar'),null);
+const source=fs.readFileSync('app/commerce-store.tsx','utf8');const checkout=source.split('\n').find(l=>l.startsWith('async function checkout('));assert.ok(checkout);assert.ok(!source.includes('Send order via WhatsApp'));
+async function scenario(mode){const calls=[];let currentOrder=null;const popup={opener:{},location:{replace:u=>{calls.push('whatsapp');assert.ok(u.includes('NAJD-123'));assert.equal(currentOrder.id,order.id)}},close:()=>calls.push('close')};let checkoutFn;
+ const ctx={console,encodeURIComponent,Window:undefined,checkoutPending:{current:false},cart:[{id:'one',qty:2}],serverBill:{},quoteError:'',settings:{whatsapp:'970599338951'},captchaToken:'',customer:{phone:'0500000000'},wholesale:false,city:0,coupon:'',lastAttempt:{current:null},window:{open:()=>{calls.push('open');return mode==='blocked'?null:popup},sessionStorage:{}},setBusy:()=>{},checkoutAttempt:async()=>({id:'request'}),clearCheckoutAttempt:()=>{},checkoutError:async()=>Error('save failed'),db:{functions:{invoke:async()=>{calls.push('save');return mode==='failure'?{error:Error('failed')}:{data:order}}}},setOrders:()=>{},setConfirmed:o=>{currentOrder=o;calls.push('confirmed')},setCart:()=>calls.push('clear-cart'),setModal:()=>{},orderWhatsAppUrl,lang:'ar',asError:e=>e,toast:()=>calls.push('error'),setCaptchaToken:()=>{},setCaptchaAttempt:()=>{},tr:a=>a};
+ // Avoid the unrelated background inventory refresh after a successful save.
+ ctx.db.from=()=>({select:()=>Promise.resolve({error:Error('inventory refresh unavailable')})});
+ vm.runInNewContext(compile(checkout)+'\nglobalThis.runCheckout=checkout',ctx);checkoutFn=ctx.runCheckout;await checkoutFn({preventDefault(){}});
+ if(mode==='failure'){assert.ok(calls.includes('close'));assert.ok(!calls.includes('whatsapp'));assert.ok(!calls.includes('clear-cart'));}else{assert.ok(calls.indexOf('save')<calls.indexOf('confirmed'));assert.ok(calls.includes('clear-cart'));if(mode==='blocked')assert.ok(!calls.includes('whatsapp'));else assert.ok(calls.indexOf('confirmed')<calls.indexOf('whatsapp'));}
+}
+await scenario('success');await scenario('failure');await scenario('blocked');
+console.log('PASS recorded order WhatsApp message, save-before-redirect, failed-save cleanup, popup blocking fallback and retained cart on failure.');
