@@ -95,7 +95,7 @@
 
 /* Availability, checkout and mobile-first category navigation. */
 .is-sold-out{filter:none!important;opacity:1!important}
-.is-sold-out .nc-image-link,.is-sold-out .nx-product-photo>a:first-child,.is-sold-out .image-button,.is-sold-out .nc-info,.is-sold-out .nx-product-info,.is-sold-out .product-info{filter:grayscale(.65);opacity:.55}
+
 .checkout-wrap-items>div{padding:12px 0;border-bottom:1px solid #dec4cc}
 .cart-line .gift-wrap-option{margin-top:12px;padding:10px;font-size:12px}
 
