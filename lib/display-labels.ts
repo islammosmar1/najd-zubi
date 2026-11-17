@@ -10,7 +10,7 @@ export function localityLabel(value:string,lang:Lang){
  return parts.find(p=>script.test(p))||parts.find(p=>/[A-Za-z]/.test(p))||value;
 }
 const checkoutMessages:Record<string,[string,string]>={
- 'Coupon not valid':['كود الخصم غير صالح أو انتهت صلاحيته','קוד ההנחה אינו תקף או פג תוקפו'],
+ 'Coupon not valid':['الكود غير صالح لبيانات الطلب أو انتهت صلاحيته','קוד ההנחה אינו תקף לפרטי ההזמנה או פג תוקפו'],
  'Coupon conditions not met':['شروط كود الخصم غير متحققة للمنتجات في السلة','תנאי קוד ההנחה אינם מתקיימים למוצרים בסל'],
  'Insufficient stock':['الكمية المطلوبة غير متوفرة','הכמות המבוקשת אינה במלאי'],
  'Insufficient variant stock':['الكمية المطلوبة غير متوفرة لهذا اللون أو المقاس','הכמות אינה במלאי לצבע או למידה שנבחרו'],
